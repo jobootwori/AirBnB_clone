@@ -21,3 +21,24 @@ class BaseModel:
         if "id" not in kwargs:
             models.storage.new(self)
 
+    def __setattr__(self, name, value)
+        """ Maintain correct types for non-string attributes while keeping
+        the attributes as public attributes.
+
+        Args:
+            name (str) name of attribute
+            value: value to associate with `name`
+
+        Raises:
+            AttributeError: If value cannot be parsed into correct format
+        """
+        if name in ['created_at', 'updated_at']:
+            if isinstance(value, str):
+                try:
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                except ValueError:
+                    raise AttributeError("Invalid value: ({}) for name: ({})"
+                            .format(value, name))
+        super().__setattr__(name, value)
+
+
