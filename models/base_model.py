@@ -41,4 +41,21 @@ class BaseModel:
                             .format(value, name))
         super().__setattr__(name, value)
 
+    def __str__(self):
+        """Format `self` for output"""
+        return "[{}] ({}) {}".format(self.__class__.__name__,
+                self.id, self.__dict__)
 
+    def save(self):
+        """Updates the piblic instance attribute updated_at"""
+        self.updated_at = datetime.now()
+        models.storage.save()
+
+    def to_dict(self):
+        """returns a dictionary containing all key/value pairs of __dict__"""
+        d = {}
+        d.update(self.__dict__)
+        d['created_at'] = d['created_at'].isoformat()
+        d['updated_at'] = d['updated_at'].isoformat()
+        d['__class__'] = self.__class__.__name__
+        return d
