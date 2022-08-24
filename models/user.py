@@ -1,12 +1,15 @@
-#!/usr/bin/python3
-"""class User that inherits from BaseModel"""
+#!/user/bin/python3
+"""
+class User
+"""
 
-import models
+from models.base_model import BaseModel
 
 
-class User(models.BaseModel):
-    """Class to store User info"""
-    email = ''
-    password = ''
-    first_name = ''
-    last_name = ''
+class User(BaseModel):
+    """ initializes class """
+
+    email = ""
+    password = ""
+    first_name = ""
+    last_name = ""

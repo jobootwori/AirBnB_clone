@@ -1,48 +1,57 @@
 #!/usr/bin/python3
-"""Store first object"""
-
-import models
+"""
+class file storage
+"""
 import json
+import os.path
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
-def model_obj_hook(o_dict):
-    """imports BaseModel from models and returns dict"""
-
-    try:
-        cls = o_dict['__class__']
-    except KeyError:
-        return o_dict
-    else:
-        try:
-            return getattr(models, cls)(**o_dict)
-        except AttributeError:
-            return o_dict
 
 class FileStorage:
-    """created private class atrributes"""
+    """
+    inner class file storage
+    """
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """returns dictionary"""
-        return self.__objects
+        """
+        methon all of file storage
+        """
+        return FileStorage.__objects
 
     def new(self, obj):
-        """sets the obj with key"""
-        key = obj.__class__.__name__ + '.' + obj.id
-        self.__objects[key] = obj
+        """
+        method new of file storage
+        """
+        FileStorage.__objects[obj.__class__.__name__ + "." + obj.id] = obj
 
     def save(self):
-        """serializes __objects to the JSON file"""
-        with open(self.__file_path, 'w') as f:
-            jdict = {}
-            for name, obj in self,__objects.items():
-                jdict[name] = obj.to_dict()
-            json.dump(jdict, f)
+        """
+        method save of file storage
+        """
+        first_dict = {}
+        for key, val in FileStorage.__objects.items():
+            if val:
+                first_dict[key] = val.to_dict()
+        with open(FileStorage.__file_path, 'w', encoding='utf-8') as f:
+            json.dump(first_dict, f)
 
     def reload(self):
-        """deserializes the JSON file"""
-        try:
-            with open(self.__file_path, 'r') as f:
-                self.__objects = json.load(f, object_hook=models_obj_hook)
-        except:
-            pass
+        """
+        method reload of class reload
+        """
+        my_dict = {'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                   'State': State, 'City': City, 'Amenity': Amenity,
+                   'Review': Review}
+        if os.path.isfile(FileStorage.__file_path):
+            with open(FileStorage.__file_path, 'r', encoding='utf-8') as q:
+                other_dict = json.loads(q.read())
+                for key, val in other_dict.items():
+                    self.new(my_dict[val['__class__']](**val))
